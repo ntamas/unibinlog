@@ -1,0 +1,12 @@
+/* vim:set ts=4 sw=4 sts=4 et: */
+
+/* This file is supposed to be #included only from source files, not other
+ * headers. */
+
+#ifndef UNIBINLOG_CONFIG_H
+#define UNIBINLOG_CONFIG_H
+
+#cmakedefine HAVE_FMEMOPEN
+
+#endif
+

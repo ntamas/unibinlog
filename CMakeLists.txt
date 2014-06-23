@@ -11,6 +11,8 @@ project(unibinlog C CXX)
 # Build options
 #####################################################################
 
+option(BUILD_SHARED_LIBS "Build package with shared libraries." OFF)
+
 #####################################################################
 # Version information
 #####################################################################
@@ -25,6 +27,13 @@ project(unibinlog C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake;${CMAKE_MODULE_PATH})
 # Nothing to find here yet
+
+#####################################################################
+# Platform checks
+#####################################################################
+
+INCLUDE(CheckFunctionExists)
+CHECK_FUNCTION_EXISTS(fmemopen HAVE_FMEMOPEN)
 
 #####################################################################
 # Compiler flags for different build configurations
@@ -47,3 +56,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 #####################################################################
 
 add_subdirectory(src)
+add_subdirectory(test)

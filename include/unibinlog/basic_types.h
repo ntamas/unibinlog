@@ -3,6 +3,8 @@
 #ifndef UNIBINLOG_BASIC_TYPES_H
 #define UNIBINLOG_BASIC_TYPES_H
 
+#include <stdint.h>
+
 /* Typedefs for unsigned and signed integers with exact bit sizes */
 typedef int8_t s8;
 typedef int16_t s16;

@@ -4,16 +4,6 @@
 #define UNIBINLOG_TYPES_H
 
 /**
- * Enum constants for the different checksum types supported by this library.
- */
-typedef enum {
-	UB_CHKSUM_NONE = 0,           /**< No checksum */
-	UB_CHKSUM_SUM,                /**< Sum of bytes modulo 256 */
-	UB_CHKSUM_NEGATED_SUM,        /**< Sum of bytes modulo 256, bitwise negated */
-	UB_CHKSUM_FLETCHER_16,        /**< 16-bit Fletcher checksum with modulo 255 */
-} ub_chksum_type_t;
-
-/**
  * Enum constants for the different block types in \c unibin files.
  */
 typedef enum {
