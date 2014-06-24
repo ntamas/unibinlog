@@ -8,6 +8,7 @@ set(unibinlog_SRCS
 	chksum.c
 	debug.c
 	error.c
+	fmemopen.c
 	lowlevel.c
 )
 	

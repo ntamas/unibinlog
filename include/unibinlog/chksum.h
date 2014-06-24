@@ -3,6 +3,8 @@
 #ifndef UNIBINLOG_CHKSUM_H
 #define UNIBINLOG_CHKSUM_H
 
+#include <stdlib.h>
+
 /**
  * Enum constants for the different checksum types supported by this library.
  */

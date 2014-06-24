@@ -6,6 +6,7 @@ cmake_policy(SET CMP0003 NEW)
 #####################################################################
 
 project(unibinlog C CXX)
+enable_testing()
 
 #####################################################################
 # Build options
@@ -32,8 +33,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake;${CMAKE_MODULE_PATH}
 # Platform checks
 #####################################################################
 
-INCLUDE(CheckFunctionExists)
-CHECK_FUNCTION_EXISTS(fmemopen HAVE_FMEMOPEN)
+INCLUDE(CheckSymbolExists)
+CHECK_SYMBOL_EXISTS(fmemopen stdio.h HAVE_FMEMOPEN)
 
 #####################################################################
 # Compiler flags for different build configurations
@@ -49,7 +50,9 @@ set(CMAKE_C_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-                    ${CMAKE_CURRENT_BINARY_DIR}/include)
+                    ${CMAKE_CURRENT_BINARY_DIR}/include
+					${CMAKE_CURRENT_SOURCE_DIR}/src
+					${CMAKE_CURRENT_BINARY_DIR}/src)
 
 #####################################################################
 # Process subdirectories

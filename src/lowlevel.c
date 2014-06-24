@@ -18,7 +18,7 @@ ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type) {
     pos = ub_i_header_marker_length;
 
 	/* version number */
-	header[pos] = 1;
+	header[pos] = version;
 
 	/* checksum type */
 	header[pos+1] = chksum_type;

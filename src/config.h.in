@@ -7,6 +7,7 @@
 #define UNIBINLOG_CONFIG_H
 
 #cmakedefine HAVE_FMEMOPEN
+#cmakedefine HAVE_GET_TEMP_FILE_NAME
 
 #endif
 
