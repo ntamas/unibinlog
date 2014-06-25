@@ -18,6 +18,7 @@ typedef enum {
     UB_FAILURE,                        /**< Generic failure code */
     UB_EUNSUPPORTED,                   /**< Unsupported operation */
     UB_EUNIMPLEMENTED,                 /**< Unimplemented operation */
+    UB_ETOOLONG                        /**< Payload too long */
 } ub_error_t;
 
 #ifdef UB_LOG_ERRORS

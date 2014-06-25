@@ -14,6 +14,7 @@ static char* ub_i_error_messages[] = {
     "Unspecified failure",                          /* UB_FAILURE */
     "Unsupported operation",                        /* UB_EUNSUPPORTED */
     "Unimplemented operation",                      /* UB_EUNIMPLEMENTED */
+    "Payload too long",                             /* UB_ETOOLONG */
 };
 
 const char* ub_error_to_string(int code) {

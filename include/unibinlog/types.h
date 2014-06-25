@@ -12,7 +12,7 @@ typedef enum {
 	UB_BLOCK_LOG_HEADER,          /**< Log header block */
 	UB_BLOCK_LOG_ENTRY,           /**< Log entry block */
 	UB_BLOCK_EVENT,               /**< Event block */
-} ub_block_t;
+} ub_block_type_t;
 
 /**
  * Enum constants for the different data types in \c unibin files.
@@ -42,7 +42,7 @@ typedef enum {
 	UB_XFORM_IDENTITY = 0,            /**< Identity transformation */
 	UB_XFORM_LINEAR = 1,              /**< Linear transformation */
 	UB_XFORM_IF_THEN_ELSE = 2,        /**< If-then-else transformation */
-} ub_xform_t;
+} ub_xform_type_t;
 
 #endif
 
