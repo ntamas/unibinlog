@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #define TEST_CASE(func) int test_ ## func()
 
 #define START_OF_TESTS                 \
