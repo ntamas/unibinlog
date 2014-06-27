@@ -93,7 +93,7 @@ size_t ub_buffer_capacity(const ub_buffer_t* buf);
  *
  * \param  buf   an initialized buffer
  */
-void ub_buffer_clear(ub_buffer_t* buffer);
+void ub_buffer_clear(ub_buffer_t* buf);
 
 /**
  * Fills the buffer with the given byte.
@@ -101,7 +101,15 @@ void ub_buffer_clear(ub_buffer_t* buffer);
  * \param  buf   an initialized buffer
  * \param  byte  the byte
  */
-void ub_buffer_fill(ub_buffer_t* buffer, u8 byte);
+void ub_buffer_fill(ub_buffer_t* buf, u8 byte);
+
+/**
+ * Writes the contents of the buffer into a file.
+ *
+ * \param  buf   an initialized buffer
+ * \param  f     the file to write the buffer contents into
+ */
+ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f);
 
 /**
  * Calculates the checksum of the buffer.
@@ -156,6 +164,20 @@ void ub_buffer_print_slice(const ub_buffer_t* buf, size_t start, size_t end,
  * \param  prefix  the prefix to print before each line.
  */
 void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefix);
+
+/**
+ * Updates the contents of a buffer from an array.
+ *
+ * The destination buffer must contain enough space. This is not checked explicitly.
+ *
+ * \param  dest        the destination buffer
+ * \param  dest_index  the index of the destination buffer where the source
+ *                     array will be copied to
+ * \param  src         the source array
+ * \param  num_bytes   the number of bytes to copy
+ */
+void ub_buffer_read_into(ub_buffer_t* dest, size_t dest_index,
+        const void* src, size_t num_bytes);
 
 /**
  * Resizes the buffer. Note that this method does not actually deallocate any

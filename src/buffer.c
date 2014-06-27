@@ -35,7 +35,7 @@ ub_error_t ub_buffer_init(ub_buffer_t* buf, size_t size) {
 ub_error_t ub_buffer_copy(ub_buffer_t* dest, const ub_buffer_t* src) {
     size_t n = ub_buffer_size(src);
     UB_CHECK(ub_buffer_init(dest, n));
-    memcpy(UB_BUFFER(*dest), UB_BUFFER(*src), n);
+    ub_buffer_read_into(dest, 0, UB_BUFFER(*src), n);
     return UB_SUCCESS;
 }
 
@@ -67,6 +67,17 @@ void ub_buffer_clear(ub_buffer_t* buf) {
 void ub_buffer_fill(ub_buffer_t* buf, u8 byte) {
     assert(buf->bytes);
     memset(buf->bytes, byte, ub_buffer_size(buf));
+}
+
+ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f) {
+    size_t bytes_to_write, bytes_written;
+
+    assert(buf->bytes);
+
+    bytes_to_write = ub_buffer_size(buf);
+    bytes_written = fwrite(buf->bytes, 1, bytes_to_write, f);
+
+    return bytes_written == bytes_to_write ? UB_SUCCESS : UB_EWRITE;
 }
 
 ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
@@ -120,6 +131,12 @@ void ub_buffer_print_slice(const ub_buffer_t* buf, size_t start, size_t end,
 void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefix) {
     ub_buffer_t tmp_buf = ub_buffer_view(data, size);
     ub_buffer_print(&tmp_buf, file, prefix);
+}
+
+void ub_buffer_read_into(ub_buffer_t* dest, size_t dest_index,
+        const void* src, size_t num_bytes) {
+    assert(dest->bytes);
+    memcpy(dest->bytes + dest_index, src, num_bytes);
 }
 
 ub_error_t ub_buffer_resize(ub_buffer_t* buf, size_t new_size) {
@@ -204,7 +221,7 @@ ub_error_t ub_buffer_truncate(ub_buffer_t* buf) {
 
 void ub_buffer_update(ub_buffer_t* dest, const ub_buffer_t* src) {
     assert(ub_buffer_size(dest) == ub_buffer_size(src));
-    memcpy(dest->bytes, src->bytes, ub_buffer_size(dest));
+    ub_buffer_read_into(dest, 0, UB_BUFFER(*src), ub_buffer_size(src));
 }
 
 u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type) {
