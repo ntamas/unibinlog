@@ -60,3 +60,9 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
     return UB_SUCCESS;
 }
 
+ub_error_t ub_write_comment_block(FILE* f, const char* comment,
+        ub_chksum_type_t chksum_type) {
+    return UB_EUNIMPLEMENTED;
+}
+
+

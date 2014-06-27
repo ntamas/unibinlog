@@ -44,5 +44,17 @@ ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type);
 ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
         const void* payload, size_t length, ub_chksum_type_t chksum_type);
 
+/**
+ * Writes a comment block containing the given string into the given file.
+ *
+ * \param  f            the file to write into
+ * \param  comment      the comment to write
+ * \param  chksum_type  the checksum type at the end of the block (if any).
+ *                      This must match the checksum type specified in the
+ *                      header of the \c unibin file
+ */
+ub_error_t ub_write_comment_block(FILE* f, const char* comment,
+        ub_chksum_type_t chksum_type);
+
 #endif
 

@@ -110,15 +110,15 @@ void ub_buffer_fill(ub_buffer_t* buffer, u8 byte);
  * \param  result  pointer to a memory area that will hold the checksum. It
  *                 must be large enough to store the entire checksum, and it
  *                 is the responsibility of the caller to ensure this.
- * \param  type    the type of checksum to calculate.
+ * \param  chksum_type    the type of checksum to calculate.
  * \param  skip    number of bytes to skip from the end of the buffer.
  *                 This is useful when the checksum is part of the buffer
  *                 itself and we do not want the checksum byte itself to
  *                 be included in the checksum.
  * \return error code or \c UB_SUCCESS if everything was OK.
  */
-int ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
-        ub_chksum_type_t type, size_t skip);
+ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
+        ub_chksum_type_t chksum_type, size_t skip);
 
 /**
  * Prints the buffer to the given file in a human-readable format, using the
@@ -197,14 +197,14 @@ void ub_buffer_update(ub_buffer_t* dest, const ub_buffer_t* src);
  * Updates the checksum of the buffer, assuming that it is stored in the last
  * N bytes where N depends on the type of the checksum.
  *
- * \param  buf   an initialized buffer
- * \param  type  the type of checksum to calculate.
+ * \param  buf          an initialized buffer
+ * \param  chksum_type  the type of checksum to calculate.
  *
- * \return the checksum of the buffer, according to \p type. The checksum
+ * \return the checksum of the buffer, according to \p chksum_type. The checksum
  *   does not include the last N bytes which is assumed to be the checksum
  *   itself, but includes everything else.
  */
-u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t type);
+u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type);
 
 /**
  * Checks the checksum of the buffer.
@@ -212,13 +212,13 @@ u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t type);
  * It is assumed that the last N bytes of the buffer is the checksum itself, and
  * that it must be left out of the calculation.
  *
- * \param  buf   an initialized buffer
- * \param  type  the type of checksum to calculate. No checking is performed
- *               when this is equal to \c UB_CHKSUM_NONE.
+ * \param  buf          an initialized buffer
+ * \param  chksum_type  the type of checksum to calculate. No checking is performed
+ *                      when this is equal to \c UB_CHKSUM_NONE.
  * \return  \c UB_SUCCESS if the checksum is OK, \c UB_FAILURE otherwise.
  */
-int ub_buffer_validate_checksum(const ub_buffer_t* buf,
-        ub_chksum_type_t type);
+ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
+        ub_chksum_type_t cksum_type);
 
 /**
  * Destroys a buffer and frees its associated memory.
