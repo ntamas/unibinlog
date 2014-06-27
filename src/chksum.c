@@ -33,6 +33,9 @@ ub_error_t ub_get_chksum_of_array(const void* array_, size_t size,
             for (i = 0; i < size; i++) {
                 *chksum += array[i];
             }
+            if (chksum_type == UB_CHKSUM_NEGATED_SUM) {
+                *chksum = ~(*chksum);
+            }
             break;
 
         case UB_CHKSUM_FLETCHER_16:

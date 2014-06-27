@@ -87,8 +87,48 @@ TEST_CASE(write_block) {
     return 0;
 }
 
+TEST_CASE(write_comment_block) {
+    char buffer[32];
+    const char* payload = "Spanish Inquisition";
+    FILE* f;
+
+    /* Testing comment block without checksum */
+    f = fmemopen(buffer, 32, "w+");
+    ub_write_comment_block(f, payload, UB_CHKSUM_NONE);
+    fclose(f);
+    if (buffer[0] != UB_BLOCK_COMMENT || buffer[1] != 0 || buffer[2] != 19)
+        return 1;
+    if (strcmp(buffer+3, payload))
+        return 2;
+
+    /* Testing comment block with checksum */
+    f = fmemopen(buffer, 32, "w+");
+    ub_write_comment_block(f, payload, UB_CHKSUM_NEGATED_SUM);
+    fclose(f);
+    if (buffer[0] != UB_BLOCK_COMMENT || buffer[1] != 0 || buffer[2] != 19)
+        return 3;
+    if (memcmp(buffer+3, payload, strlen(payload)))
+        return 4;
+	if (strcmp(buffer+22, "\x59"))
+		return 5;
+
+    /* Testing comment block with two-byte checksum */
+    f = fmemopen(buffer, 32, "w+");
+    ub_write_comment_block(f, payload, UB_CHKSUM_FLETCHER_16);
+    fclose(f);
+    if (buffer[0] != UB_BLOCK_COMMENT || buffer[1] != 0 || buffer[2] != 19)
+        return 6;
+    if (memcmp(buffer+3, payload, strlen(payload)))
+        return 7;
+	if (strcmp(buffer+22, "\xad\x75"))
+		return 8;
+
+	return 0;
+}
+
 START_OF_TESTS;
 RUN_TEST_CASE(write_u8_array);
 RUN_TEST_CASE(write_header);
 RUN_TEST_CASE(write_block);
+RUN_TEST_CASE(write_comment_block);
 NO_MORE_TEST_CASES;
