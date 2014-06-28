@@ -73,10 +73,46 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
     return UB_SUCCESS;
 }
 
+static ub_error_t ub_i_write_block_from_buffer(FILE* f, ub_block_type_t block_type,
+        ub_buffer_t* payload, ub_chksum_type_t chksum_type) {
+    return ub_write_block(f, block_type, UB_BUFFER(*payload),
+            ub_buffer_size(payload), chksum_type);
+}
+
 ub_error_t ub_write_comment_block(FILE* f, const char* comment,
         ub_chksum_type_t chksum_type) {
     return ub_write_block(f, UB_BLOCK_COMMENT, comment, strlen(comment),
             chksum_type);
 }
 
+ub_error_t ub_write_log_header_block(FILE* f, ub_log_column_t* columns,
+        size_t num_columns, ub_chksum_type_t chksum_type) {
+    ub_buffer_t buf;
+    ub_buffer_location_t loc;
+
+    if (num_columns > 255)
+        return UB_ETOOLONG;
+
+    /* create the buffer where we will assemble the block */
+    UB_CHECK(ub_buffer_init(&buf, 1));
+
+    /* write the number of columns */
+    UB_BUFFER(buf)[0] = num_columns;
+
+    /* write the columns themselves */
+    loc = ub_buffer_location(&buf, 1);
+    while (num_columns > 0) {
+        UB_CHECK(ub_log_column_write(columns, &loc));
+        columns++;
+        num_columns--;
+    }
+
+    /* write the entire buffer into a file */
+    UB_CHECK(ub_i_write_block_from_buffer(f, UB_BLOCK_LOG_HEADER, &buf, chksum_type));
+
+    /* destroy the buffer */
+    ub_buffer_destroy(&buf);
+
+    return UB_SUCCESS;
+}
 

@@ -75,5 +75,5 @@ ub_error_t ub_log_column_write(const ub_log_column_t* column,
 	*UB_BUFFER_LOCATION(*loc) = column->xform;
 	loc->index++;
 
-	return UB_EUNIMPLEMENTED;
+	return UB_SUCCESS;
 }

@@ -8,6 +8,7 @@
 #include <unibinlog/basic_types.h>
 #include <unibinlog/chksum.h>
 #include <unibinlog/error.h>
+#include <unibinlog/log_column.h>
 #include <unibinlog/types.h>
 
 /**
@@ -55,6 +56,21 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
  */
 ub_error_t ub_write_comment_block(FILE* f, const char* comment,
         ub_chksum_type_t chksum_type);
+
+/**
+ * Writes a log header block containing the given columns into the given
+ * file.
+ *
+ * \param  f            the file to write into
+ * \param  columns      pointer to an array containing the column headers
+ *                      to write
+ * \param  num_columns  the number of column headers to write
+ * \param  chksum_type  the checksum type at the end of the block (if any).
+ *                      This must match the checksum type specified in the
+ *                      header of the \c unibin file
+ */
+ub_error_t ub_write_log_header_block(FILE* f, ub_log_column_t* columns,
+        size_t num_columns, ub_chksum_type_t chksum_type);
 
 #endif
 

@@ -126,9 +126,37 @@ TEST_CASE(write_comment_block) {
 	return 0;
 }
 
+TEST_CASE(write_log_header_block) {
+    char buffer[48];
+	ub_buffer_t view;
+    FILE* f;
+	ub_log_column_t columns[3];
+
+	view = ub_buffer_view(buffer, 48);
+
+	ub_log_column_init(&columns[0], "lat", UB_DATATYPE_FLOAT);
+	ub_log_column_init(&columns[1], "lon", UB_DATATYPE_FLOAT);
+	ub_log_column_init(&columns[2], "heading", UB_DATATYPE_U16);
+
+    f = fmemopen(buffer, 48, "w+");
+    ub_write_log_header_block(f, columns, 3, UB_CHKSUM_FLETCHER_16);
+    fclose(f);
+	if (memcmp(buffer, "\x02\x00\x17\x03\x03lat\x08\x00\x03lon\x08\x00\x07heading\x04\x00\x9c\x62", 28)) {
+		ub_buffer_print(&view, stderr, "Got: ");
+		return 1;
+	}
+
+	ub_log_column_destroy(&columns[0]);
+	ub_log_column_destroy(&columns[1]);
+	ub_log_column_destroy(&columns[2]);
+
+	return 0;
+}
+
 START_OF_TESTS;
 RUN_TEST_CASE(write_u8_array);
 RUN_TEST_CASE(write_header);
 RUN_TEST_CASE(write_block);
 RUN_TEST_CASE(write_comment_block);
+RUN_TEST_CASE(write_log_header_block);
 NO_MORE_TEST_CASES;
