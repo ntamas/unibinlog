@@ -34,14 +34,23 @@ typedef struct {
 } ub_buffer_t;
 
 /**
- * \def BUFFER(buf, type)
+ * Lightweight structure that holds a buffer and an index to a location
+ * in the buffer.
+ */
+typedef struct {
+    ub_buffer_t* buffer;
+    size_t index;
+} ub_buffer_location_t;
+
+/**
+ * \def UB_BUFFER(buf)
  *
  * Returns a pointer to the data area of the given buffer.
  */
 #define UB_BUFFER(buf) ((buf).bytes)
 
 /**
- * \def BUFFER_AS(buf, type)
+ * \def UB_BUFFER_AS(buf, type)
  *
  * Returns a pointer to the data area of the given buffer, cast to the specified
  * type.
@@ -54,6 +63,29 @@ typedef struct {
  * Returns a pointer to the data area of the given buffer, cast to a string.
  */
 #define UB_BUFFER_AS_STRING(buf) ((char*)(buf).bytes)
+
+/**
+ * \def UB_BUFFER_FROM_INDEX_AS(buf, index, type)
+ *
+ * Returns a pointer to the data area of the given buffer, starting at the
+ * indexth byte, cast to the specified type.
+ */
+#define UB_BUFFER_FROM_INDEX_AS(buf, index, type) ((type*)((buf).bytes + index))
+
+/**
+ * \def UB_BUFFER_LOCATION(loc)
+ *
+ * Returns a pointer to the location pointed to by the given location object.
+ */
+#define UB_BUFFER_LOCATION(loc) ((loc).buffer->bytes + (loc).index)
+
+/**
+ * \def UB_BUFFER_LOCATION_AS(loc, type)
+ *
+ * Returns a pointer to the location pointed to by the given location object,
+ * cast into the given type.
+ */
+#define UB_BUFFER_LOCATION_AS(loc, type) ((type*)((loc).buffer->bytes + (loc).index))
 
 /**
  * Creates a buffer of the given initial size.
@@ -104,6 +136,14 @@ void ub_buffer_clear(ub_buffer_t* buf);
 void ub_buffer_fill(ub_buffer_t* buf, u8 byte);
 
 /**
+ * Returns a buffer location referring to the front of the buffer.
+ *
+ * \param  buf  an initialized buffer
+ * \return a buffer location pointing to the first byte in the buffer
+ */
+ub_buffer_location_t ub_buffer_front(ub_buffer_t* buf);
+
+/**
  * Writes the contents of the buffer into a file.
  *
  * \param  buf   an initialized buffer
@@ -127,6 +167,16 @@ ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f);
  */
 ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
         ub_chksum_type_t chksum_type, size_t skip);
+
+/**
+ * Returns a buffer location referring to the byte with the given index in
+ * the buffer. Bytes are indexed from zero.
+ *
+ * \param  buf    an initialized buffer
+ * \param  index  the index of the byte to point to
+ * \return a buffer location pointing to the given byte in the buffer
+ */
+ub_buffer_location_t ub_buffer_location(ub_buffer_t* buf, size_t index);
 
 /**
  * Prints the buffer to the given file in a human-readable format, using the
@@ -166,20 +216,6 @@ void ub_buffer_print_slice(const ub_buffer_t* buf, size_t start, size_t end,
 void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefix);
 
 /**
- * Updates the contents of a buffer from an array.
- *
- * The destination buffer must contain enough space. This is not checked explicitly.
- *
- * \param  dest        the destination buffer
- * \param  dest_index  the index of the destination buffer where the source
- *                     array will be copied to
- * \param  src         the source array
- * \param  num_bytes   the number of bytes to copy
- */
-void ub_buffer_read_into(ub_buffer_t* dest, size_t dest_index,
-        const void* src, size_t num_bytes);
-
-/**
  * Resizes the buffer. Note that this method does not actually deallocate any
  * memory that has already been assigned to the buffer in case we need it
  * later. Use \ref ub_buffer_truncate() to truncate the allocated size of the
@@ -189,6 +225,29 @@ void ub_buffer_read_into(ub_buffer_t* dest, size_t dest_index,
  * \param  new_size      the new size of the buffer in bytes
  */
 ub_error_t ub_buffer_resize(ub_buffer_t* buf, size_t new_size);
+
+/**
+ * Resizes the buffer if it is smaller than the given size.
+ *
+ * \param  buffer    the buffer to resize.
+ * \param  min_size  the minimum size of the buffer in bytes that we need
+ */
+ub_error_t ub_buffer_resize_if_smaller(ub_buffer_t* buf, size_t min_size);
+
+/**
+ * Ensures that the buffer will be able to hold the given number of bytes
+ * without having to reallocate its own internal memory segment. Note that
+ * this function does \em not resize the buffer, it only updates its capacity
+ * if the current capacity is smaller than the requested capacity.
+ *
+ * Note that no memory will ever be freed by this function. If you want to
+ * make the buffer free all the memory that it does not use currently, call
+ * \ref ub_buffer_truncate() instead.
+ *
+ * \param  buffer    the buffer to resize.
+ * \param  capacity  the new \em minimum capacity of the buffer in bytes
+ */
+ub_error_t ub_buffer_reserve(ub_buffer_t* buf, size_t capacity);
 
 /**
  * Returns the size of the buffer. The size of the buffer is the number of
@@ -214,6 +273,59 @@ ub_error_t ub_buffer_truncate(ub_buffer_t* buf);
  * \param  src   the source buffer
  */
 void ub_buffer_update(ub_buffer_t* dest, const ub_buffer_t* src);
+
+/**
+ * Updates the contents of a buffer from an array, starting from a given buffer
+ * location.
+ *
+ * The destination buffer must contain enough space. This is not checked explicitly.
+ *
+ * \param  dest       the location in the destination buffer where the source
+ *                    array will be copied to. It will be advanced to the
+ *                    first location in the buffer \em after the written copy
+ *                    of the array upon exit
+ * \param  src        the source array
+ * \param  num_bytes  the number of bytes to copy
+ */
+void ub_buffer_update_from_array(ub_buffer_location_t* dest, const void* src,
+        size_t num_bytes);
+
+/**
+ * Updates the contents of a buffer from an array, starting from a given buffer
+ * location, growing the buffer if needed.
+ *
+ * \param  dest       the location in the destination buffer where the source
+ *                    array will be copied to. It will be advanced to the
+ *                    first location in the buffer \em after the written copy
+ *                    of the array upon exit
+ * \param  src        the source array
+ * \param  num_bytes  the number of bytes to copy
+ */
+ub_error_t ub_buffer_update_and_grow_from_array(ub_buffer_location_t* dest,
+        const void* src, size_t num_bytes);
+
+/**
+ * Updates the contents of a buffer from an array.
+ *
+ * The destination buffer must contain enough space. This is not checked explicitly.
+ *
+ * \param  dest       the destination buffer
+ * \param  src        the source array
+ * \param  num_bytes  the number of bytes to copy
+ */
+void ub_buffer_update_from_array_front(ub_buffer_t* dest, const void* src,
+        size_t num_bytes);
+
+/**
+ * Updates the contents of a buffer from an array, growing the buffer if
+ * needed.
+ *
+ * \param  dest       the destination buffer
+ * \param  src        the source array
+ * \param  num_bytes  the number of bytes to copy
+ */
+ub_error_t ub_buffer_update_and_grow_from_array_front(ub_buffer_t* dest,
+        const void* src, size_t num_bytes);
 
 /**
  * Updates the checksum of the buffer, assuming that it is stored in the last
@@ -246,6 +358,8 @@ ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
  * Destroys a buffer and frees its associated memory.
  */
 void ub_buffer_destroy(ub_buffer_t* buf);
+
+/***************************************************************************/
 
 #endif
 

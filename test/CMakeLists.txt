@@ -1,4 +1,4 @@
-set(TESTS chksum lowlevel)
+set(TESTS chksum log_column lowlevel)
 
 foreach(test_name ${TESTS})
     add_executable(test_${test_name} test_${test_name}.c)

@@ -9,6 +9,7 @@ set(unibinlog_SRCS
 	debug.c
 	error.c
 	fmemopen.c
+	log_column.c
 	lowlevel.c
 )
 	

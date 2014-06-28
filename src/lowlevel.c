@@ -41,6 +41,7 @@ ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type) {
 ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
         const void* payload, size_t length, ub_chksum_type_t chksum_type) {
     ub_buffer_t buf;
+    ub_buffer_location_t loc;
     size_t buf_size;
     size_t chksum_size;
 
@@ -54,11 +55,11 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
 
     /* write the header */
     UB_BUFFER(buf)[0] = block_type;
-    UB_BUFFER(buf)[1] = (length >> 8) & 0xff;
-    UB_BUFFER(buf)[2] = length & 0xff;
+    UB_BUFFER_FROM_INDEX_AS(buf, 1, u16)[0] = htons(length);
 
     /* copy the payload */
-    ub_buffer_read_into(&buf, 3, payload, length);
+    loc = ub_buffer_location(&buf, 3);
+    ub_buffer_update_from_array(&loc, payload, length);
 
     /* write the checksum if needed */
     UB_CHECK(ub_buffer_update_checksum(&buf, chksum_type));

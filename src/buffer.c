@@ -34,8 +34,10 @@ ub_error_t ub_buffer_init(ub_buffer_t* buf, size_t size) {
 
 ub_error_t ub_buffer_copy(ub_buffer_t* dest, const ub_buffer_t* src) {
     size_t n = ub_buffer_size(src);
+
     UB_CHECK(ub_buffer_init(dest, n));
-    ub_buffer_read_into(dest, 0, UB_BUFFER(*src), n);
+    ub_buffer_update_from_array_front(dest, UB_BUFFER(*src), n);
+
     return UB_SUCCESS;
 }
 
@@ -69,6 +71,10 @@ void ub_buffer_fill(ub_buffer_t* buf, u8 byte) {
     memset(buf->bytes, byte, ub_buffer_size(buf));
 }
 
+ub_buffer_location_t ub_buffer_front(ub_buffer_t* buf) {
+    return ub_buffer_location(buf, 0);
+}
+
 ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f) {
     size_t bytes_to_write, bytes_written;
 
@@ -89,6 +95,16 @@ ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
 
     size = ub_buffer_size(buf) - skip;
     return ub_get_chksum_of_array(buf->bytes, size, result, chksum_type);
+}
+
+ub_buffer_location_t ub_buffer_location(ub_buffer_t* buf, size_t index) {
+    ub_buffer_location_t result = {
+        /* buffer = */ buf,
+        /* index = */ index
+    };
+    assert(buf->bytes);
+    assert(index <= ub_buffer_size(buf));
+    return result;
 }
 
 void ub_buffer_print(const ub_buffer_t* buf, FILE* file, const char* prefix) {
@@ -133,58 +149,63 @@ void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefi
     ub_buffer_print(&tmp_buf, file, prefix);
 }
 
-void ub_buffer_read_into(ub_buffer_t* dest, size_t dest_index,
-        const void* src, size_t num_bytes) {
-    assert(dest->bytes);
-    memcpy(dest->bytes + dest_index, src, num_bytes);
+ub_error_t ub_buffer_reserve(ub_buffer_t* buf, size_t capacity) {
+    size_t current_capacity;
+    size_t current_size;
+    u8* new_bytes;
+
+    assert(buf->owner);
+
+    current_capacity = ub_buffer_capacity(buf);
+    if (capacity <= current_capacity)
+        return UB_SUCCESS;
+
+    current_size = ub_buffer_size(buf);
+    new_bytes = realloc(buf->bytes, capacity);
+    if (new_bytes == 0) {
+        buf->end = buf->alloc_end = 0;
+        return UB_ENOMEM;
+    }
+
+    UB_CHECK(ub_i_buffer_own(buf, new_bytes, capacity));
+    buf->end = buf->bytes + current_size;
+
+    return UB_SUCCESS;
 }
 
 ub_error_t ub_buffer_resize(ub_buffer_t* buf, size_t new_size) {
-    u8* new_bytes;
     size_t current_size;
-    size_t new_allocated_size;
+    size_t new_capacity;
 
-    assert(buf->bytes);
     assert(buf->owner);
 
     current_size = ub_buffer_size(buf);
-    if (new_size <= current_size) {
-        /* new size is not larger so we can simply move the 'end' pointer
-         * backwards */
-        buf->end = buf->bytes + new_size;
-        return UB_SUCCESS;
-    }
+    if (new_size > current_size) {
+        /* new size is larger so we have to double the buffer size until we exceed
+         * the new size */
+        new_capacity = current_size;
+        while (new_capacity < new_size) {
+            new_capacity <<= 1;
 
-    /* new size is larger so we have to double the buffer size until we exceed
-     * the new size */
-    new_allocated_size = current_size;
-    while (new_allocated_size < new_size) {
-        current_size = new_allocated_size;
-        new_allocated_size <<= 1;
-
-        /* protect against overflows */
-        if (new_allocated_size < current_size) {
-            new_allocated_size = new_size;
+            /* protect against overflows */
+            if (new_capacity == 0) {
+                new_capacity = new_size;
+            }
         }
+
+        /* reallocate memory */
+        UB_CHECK(ub_buffer_reserve(buf, new_capacity));
     }
 
-    /* reallocate memory */
-    new_bytes = realloc(buf->bytes, new_allocated_size);
-    if (new_bytes == 0) {
-        /* okay, maybe new_allocated_size is too large but we could still
-         * fit new_size bytes */
-        new_allocated_size = new_size;
-        new_bytes = realloc(buf->bytes, new_allocated_size);
-        if(new_bytes == 0) {
-            /* okay, we give up */
-            buf->end = buf->alloc_end = 0;
-            return UB_ENOMEM;
-        }
-    }
-
-    UB_CHECK(ub_i_buffer_own(buf, new_bytes, new_allocated_size));
     buf->end = buf->bytes + new_size;
     return UB_SUCCESS;
+}
+
+ub_error_t ub_buffer_resize_if_smaller(ub_buffer_t* buf, size_t min_size) {
+    if (ub_buffer_size(buf) >= min_size)
+        return UB_SUCCESS;
+    else
+        return ub_buffer_resize(buf, min_size);
 }
 
 size_t ub_buffer_size(const ub_buffer_t* buf) {
@@ -221,7 +242,42 @@ ub_error_t ub_buffer_truncate(ub_buffer_t* buf) {
 
 void ub_buffer_update(ub_buffer_t* dest, const ub_buffer_t* src) {
     assert(ub_buffer_size(dest) == ub_buffer_size(src));
-    ub_buffer_read_into(dest, 0, UB_BUFFER(*src), ub_buffer_size(src));
+    ub_buffer_update_from_array_front(dest, UB_BUFFER(*src), ub_buffer_size(src));
+}
+
+void ub_buffer_update_from_array(ub_buffer_location_t* dest, const void* src,
+        size_t num_bytes) {
+    assert(dest->buffer->bytes);
+    memcpy(UB_BUFFER_LOCATION(*dest), src, num_bytes);
+    dest->index += num_bytes;
+}
+
+ub_error_t ub_buffer_update_and_grow_from_array(ub_buffer_location_t* dest,
+        const void* src, size_t num_bytes) {
+    ub_buffer_t* buf = dest->buffer;
+    size_t bytes_needed = dest->index + num_bytes;
+
+    if (ub_buffer_size(buf) < bytes_needed) {
+        UB_CHECK(ub_buffer_resize(buf, bytes_needed));
+    }
+
+    ub_buffer_update_from_array(dest, src, num_bytes);
+    return UB_SUCCESS;
+}
+
+void ub_buffer_update_from_array_front(ub_buffer_t* dest, const void* src,
+        size_t num_bytes) {
+    ub_buffer_location_t front = ub_buffer_front(dest);
+    ub_buffer_update_from_array(&front, src, num_bytes);
+}
+
+ub_error_t ub_buffer_update_and_grow_from_array_front(ub_buffer_t* dest,
+        const void* src, size_t num_bytes) {
+    if (ub_buffer_size(dest) < num_bytes) {
+        UB_CHECK(ub_buffer_resize(dest, num_bytes));
+    }
+    ub_buffer_update_from_array_front(dest, src, num_bytes);
+    return UB_SUCCESS;
 }
 
 u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type) {
