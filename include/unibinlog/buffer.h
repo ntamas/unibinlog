@@ -221,15 +221,15 @@ void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefi
  * later. Use \ref ub_buffer_truncate() to truncate the allocated size of the
  * buffer to the size that is actually used.
  *
- * \param  buffer        the buffer to resize.
- * \param  new_size      the new size of the buffer in bytes
+ * \param  buf        the buffer to resize.
+ * \param  new_size   the new size of the buffer in bytes
  */
 ub_error_t ub_buffer_resize(ub_buffer_t* buf, size_t new_size);
 
 /**
  * Resizes the buffer if it is smaller than the given size.
  *
- * \param  buffer    the buffer to resize.
+ * \param  buf       the buffer to resize.
  * \param  min_size  the minimum size of the buffer in bytes that we need
  */
 ub_error_t ub_buffer_resize_if_smaller(ub_buffer_t* buf, size_t min_size);
@@ -244,7 +244,7 @@ ub_error_t ub_buffer_resize_if_smaller(ub_buffer_t* buf, size_t min_size);
  * make the buffer free all the memory that it does not use currently, call
  * \ref ub_buffer_truncate() instead.
  *
- * \param  buffer    the buffer to resize.
+ * \param  buf       the buffer to resize.
  * \param  capacity  the new \em minimum capacity of the buffer in bytes
  */
 ub_error_t ub_buffer_reserve(ub_buffer_t* buf, size_t capacity);
@@ -352,7 +352,7 @@ u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type);
  * \return  \c UB_SUCCESS if the checksum is OK, \c UB_FAILURE otherwise.
  */
 ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
-        ub_chksum_type_t cksum_type);
+        ub_chksum_type_t chksum_type);
 
 /**
  * Destroys a buffer and frees its associated memory.
