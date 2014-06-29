@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <unibinlog/buffer.h>
 #include <unibinlog/lowlevel.h>
 
 static const char* ub_i_header_marker = "UNIBIN";
@@ -73,7 +72,7 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
     return UB_SUCCESS;
 }
 
-static ub_error_t ub_i_write_block_from_buffer(FILE* f, ub_block_type_t block_type,
+ub_error_t ub_write_block_from_buffer(FILE* f, ub_block_type_t block_type,
         ub_buffer_t* payload, ub_chksum_type_t chksum_type) {
     return ub_write_block(f, block_type, UB_BUFFER(*payload),
             ub_buffer_size(payload), chksum_type);
@@ -108,7 +107,7 @@ ub_error_t ub_write_log_header_block(FILE* f, ub_log_column_t* columns,
     }
 
     /* write the entire buffer into a file */
-    UB_CHECK(ub_i_write_block_from_buffer(f, UB_BLOCK_LOG_HEADER, &buf, chksum_type));
+    UB_CHECK(ub_write_block_from_buffer(f, UB_BLOCK_LOG_HEADER, &buf, chksum_type));
 
     /* destroy the buffer */
     ub_buffer_destroy(&buf);

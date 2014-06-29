@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include <unibinlog/basic_types.h>
+#include <unibinlog/buffer.h>
 #include <unibinlog/chksum.h>
 #include <unibinlog/error.h>
 #include <unibinlog/log_column.h>
@@ -44,6 +45,21 @@ ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type);
  */
 ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
         const void* payload, size_t length, ub_chksum_type_t chksum_type);
+
+/**
+ * Writes a \c unibin block with the given payload into the given file,
+ * assuming that the payload comes from a \c ub_buffer_t, which knows its
+ * own size.
+ *
+ * \param  f            the file to write into
+ * \param  block_type   the type of the block to write
+ * \param  payload      the payload of the block
+ * \param  chksum_type  the checksum type at the end of the block (if any).
+ *                      This must match the checksum type specified in the
+ *                      header of the \c unibin file
+ */
+ub_error_t ub_write_block_from_buffer(FILE* f, ub_block_type_t block_type,
+        ub_buffer_t* payload, ub_chksum_type_t chksum_type);
 
 /**
  * Writes a comment block containing the given string into the given file.
