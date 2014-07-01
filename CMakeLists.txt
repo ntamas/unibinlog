@@ -35,6 +35,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake;${CMAKE_MODULE_PATH}
 
 INCLUDE(CheckSymbolExists)
 CHECK_SYMBOL_EXISTS(fmemopen stdio.h HAVE_FMEMOPEN)
+CHECK_SYMBOL_EXISTS(funopen stdio.h HAVE_FUNOPEN)
 
 #####################################################################
 # Compiler flags for different build configurations
@@ -59,4 +60,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 #####################################################################
 
 add_subdirectory(src)
-add_subdirectory(test)
+
+if(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+	add_subdirectory(test)
+else(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+	message("Neither fmemopen() nor funopen() is supported on this platform; "
+		"tests will not be compiled")
+endif(HAVE_FMEMOPEN OR HAVE_FUNOPEN)

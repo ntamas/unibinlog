@@ -3,6 +3,7 @@
 #include "config.h"
 
 #ifndef HAVE_FMEMOPEN
+#ifdef HAVE_FUNOPEN
 
 #define _GNU_SOURCE
 
@@ -166,5 +167,9 @@ FILE *fmemopen(void *buf, size_t size, const char *mode) {
             fmemopen_close_callback
     );
 }
+
+#else
+#  error fmemopen() not available on this platform
+#endif
 
 #endif
