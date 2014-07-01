@@ -1,5 +1,7 @@
 /* vim:set ts=4 sw=4 sts=4 et: */
 
+#include "config.h"
+
 #ifndef HAVE_FMEMOPEN
 
 #define _GNU_SOURCE
