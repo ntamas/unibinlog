@@ -18,8 +18,8 @@ size_t ub_chksum_size(ub_chksum_type_t type) {
 
 ub_error_t ub_get_chksum_of_array(const void* array_, size_t size,
         void* chksum_, ub_chksum_type_t chksum_type) {
-    u8* array = (u8*)array_;
-    u8* chksum = (u8*)chksum_;
+    uint8_t* array = (uint8_t*)array_;
+    uint8_t* chksum = (uint8_t*)chksum_;
     size_t i;
 
     switch (chksum_type) {

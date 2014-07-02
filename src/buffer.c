@@ -25,7 +25,7 @@ static ub_error_t ub_i_buffer_own(ub_buffer_t* buf, void* data, size_t size) {
 }
 
 ub_error_t ub_buffer_init(ub_buffer_t* buf, size_t size) {
-    u8* bytes = ub_calloc(u8, size);
+    uint8_t* bytes = ub_calloc(uint8_t, size);
 	if (bytes == 0)
 		return UB_ENOMEM;
 
@@ -66,7 +66,7 @@ void ub_buffer_clear(ub_buffer_t* buf) {
     ub_buffer_fill(buf, 0);
 }
 
-void ub_buffer_fill(ub_buffer_t* buf, u8 byte) {
+void ub_buffer_fill(ub_buffer_t* buf, uint8_t byte) {
     assert(buf->bytes);
     memset(buf->bytes, byte, ub_buffer_size(buf));
 }
@@ -86,7 +86,7 @@ ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f) {
     return bytes_written == bytes_to_write ? UB_SUCCESS : UB_EWRITE;
 }
 
-ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
+ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, uint8_t* result,
         ub_chksum_type_t chksum_type, size_t skip) {
     size_t size;
     
@@ -152,7 +152,7 @@ void ub_buffer_print_view(void* data, size_t size, FILE* file, const char* prefi
 ub_error_t ub_buffer_reserve(ub_buffer_t* buf, size_t capacity) {
     size_t current_capacity;
     size_t current_size;
-    u8* new_bytes;
+    uint8_t* new_bytes;
 
     assert(buf->owner);
 
@@ -215,7 +215,7 @@ size_t ub_buffer_size(const ub_buffer_t* buf) {
 
 ub_error_t ub_buffer_truncate(ub_buffer_t* buf) {
     size_t size, capacity;
-    u8* new_bytes;
+    uint8_t* new_bytes;
 
     assert(buf->bytes);
 
@@ -280,7 +280,7 @@ ub_error_t ub_buffer_update_and_grow_from_array_front(ub_buffer_t* dest,
     return UB_SUCCESS;
 }
 
-u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type) {
+ub_error_t ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type) {
     size_t chksum_size = ub_chksum_size(chksum_type);
     size_t buf_size = ub_buffer_size(buf);
 
@@ -295,7 +295,7 @@ ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
         ub_chksum_type_t chksum_type) {
     size_t chksum_size = ub_chksum_size(chksum_type);
     size_t buf_size;
-    u8* chksum;
+    uint8_t* chksum;
     
     if (chksum_size == 0)
         return UB_SUCCESS;
@@ -304,7 +304,7 @@ ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
     if (buf_size < chksum_size)
         return UB_FAILURE;
 
-    chksum = ub_calloc(u8, chksum_size);
+    chksum = ub_calloc(uint8_t, chksum_size);
     UB_CHECK(ub_buffer_get_checksum(buf, chksum, chksum_type, chksum_size));
     return memcmp(chksum, &buf->bytes[buf_size-chksum_size], chksum_size) ?
         UB_FAILURE : UB_SUCCESS;

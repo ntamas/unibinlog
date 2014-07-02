@@ -15,8 +15,8 @@ TEST_CASE(chksum_size) {
 }
 
 TEST_CASE(get_chksum_of_array) {
-    u8 array[4] = { 0x01, 0x02, 0xF8, 0x04 };
-    u8 chksum[2];
+    uint8_t array[4] = { 0x01, 0x02, 0xF8, 0x04 };
+    uint8_t chksum[2];
 
     /* Test no checksum */
     chksum[0] = 0xde; chksum[1] = 0xad;

@@ -13,7 +13,7 @@
 #include <unibinlog/types.h>
 
 /**
- * Writes an unsigned byte array into the given file.
+ * Writes a byte array into the given file.
  *
  * \param  f       the file to write into
  * \param  array   the array to write
@@ -21,7 +21,7 @@
  * \return \c UB_EWRITE if there was an error while writing, \c UB_SUCCESS
  *         otherwise
  */
-ub_error_t ub_write_u8_array(FILE* f, const u8* array, size_t length);
+ub_error_t ub_write_byte_array(FILE* f, const void* array, size_t length);
 
 /**
  * Writes the header of an \c unibin log file into the given file.
@@ -30,7 +30,7 @@ ub_error_t ub_write_u8_array(FILE* f, const u8* array, size_t length);
  * \param  version      the version number to write into the header
  * \param  chksum_type  the checksum type that the file will use for each block
  */
-ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type);
+ub_error_t ub_write_header(FILE* f, uint8_t version, ub_chksum_type_t chksum_type);
 
 /**
  * Writes a \c unibin block with the given payload into the given file.

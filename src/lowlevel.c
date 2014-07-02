@@ -10,16 +10,16 @@
 static const char* ub_i_header_marker = "UNIBIN";
 static size_t ub_i_header_marker_length = 6;
 
-ub_error_t ub_write_u8_array(FILE* f, const u8* array, size_t length) {
-    if (fwrite(array, sizeof(u8), length, f) != length) {
+ub_error_t ub_write_byte_array(FILE* f, const void* array, size_t length) {
+    if (fwrite(array, 1, length, f) != length) {
         return UB_EWRITE;
     } else {
         return UB_SUCCESS;
     }
 }
 
-ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type) {
-	u8 header[ub_i_header_marker_length+2];
+ub_error_t ub_write_header(FILE* f, uint8_t version, ub_chksum_type_t chksum_type) {
+	uint8_t header[ub_i_header_marker_length+2];
     size_t pos;
 
 	/* format marker */
@@ -33,7 +33,7 @@ ub_error_t ub_write_header(FILE* f, u8 version, ub_chksum_type_t chksum_type) {
 	header[pos+1] = chksum_type;
 
     /* write the header */
-    UB_CHECK(ub_write_u8_array(f, header, sizeof(header)));
+    UB_CHECK(ub_write_byte_array(f, header, sizeof(header)));
 
     return UB_SUCCESS;
 }
@@ -55,7 +55,7 @@ ub_error_t ub_write_block(FILE* f, ub_block_type_t block_type,
 
     /* write the header */
     UB_BUFFER(buf)[0] = block_type;
-    UB_BUFFER_FROM_INDEX_AS(buf, 1, u16)[0] = htons(length);
+    UB_BUFFER_FROM_INDEX_AS(buf, 1, uint16_t)[0] = htons(length);
 
     /* copy the payload */
     loc = ub_buffer_location(&buf, 3);

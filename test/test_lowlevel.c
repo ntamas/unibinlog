@@ -4,13 +4,13 @@
 #include "fmemopen.h"
 #include "common.c"
 
-TEST_CASE(write_u8_array) {
+TEST_CASE(write_byte_array) {
     char buffer[32];
     const char* str = "Spanish inquisition";
     FILE* f;
 
     f = fmemopen(buffer, 32, "w+");
-    ub_write_u8_array(f, (const u8*)str, strlen(str));
+    ub_write_byte_array(f, str, strlen(str));
     fclose(f);
     if (strcmp(buffer, str))
         return 1;
@@ -154,7 +154,7 @@ TEST_CASE(write_log_header_block) {
 }
 
 START_OF_TESTS;
-RUN_TEST_CASE(write_u8_array);
+RUN_TEST_CASE(write_byte_array);
 RUN_TEST_CASE(write_header);
 RUN_TEST_CASE(write_block);
 RUN_TEST_CASE(write_comment_block);

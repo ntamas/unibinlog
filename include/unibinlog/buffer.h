@@ -18,15 +18,15 @@ typedef struct {
     union {
         /** This field can be used to access the bytes of the buffer
          *  as unsigned 8-bit values. */
-        u8* bytes;
+        uint8_t* bytes;
         /** This field can be used to access the bytes of the buffer
          *  as signed 8-bit values. */
-        s8* signed_bytes;
+        int8_t* signed_bytes;
     };
     /** Pointer to the end of the buffer */
-    u8* end;
+    uint8_t* end;
     /** Pointer to the end of the \em allocated area of the buffer */
-    u8* alloc_end;
+    uint8_t* alloc_end;
     /** Stores whether the memory area is owned by the buffer. This also
      * determines whether the size of the buffer is fixed; if the area is
      * not owned by the buffer, it cannot be grown or shrunk. */
@@ -133,7 +133,7 @@ void ub_buffer_clear(ub_buffer_t* buf);
  * \param  buf   an initialized buffer
  * \param  byte  the byte
  */
-void ub_buffer_fill(ub_buffer_t* buf, u8 byte);
+void ub_buffer_fill(ub_buffer_t* buf, uint8_t byte);
 
 /**
  * Returns a buffer location referring to the front of the buffer.
@@ -165,7 +165,7 @@ ub_error_t ub_buffer_fwrite(const ub_buffer_t* buf, FILE* f);
  *                 be included in the checksum.
  * \return error code or \c UB_SUCCESS if everything was OK.
  */
-ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, u8* result,
+ub_error_t ub_buffer_get_checksum(const ub_buffer_t* buf, uint8_t* result,
         ub_chksum_type_t chksum_type, size_t skip);
 
 /**
@@ -338,7 +338,7 @@ ub_error_t ub_buffer_update_and_grow_from_array_front(ub_buffer_t* dest,
  *   does not include the last N bytes which is assumed to be the checksum
  *   itself, but includes everything else.
  */
-u8 ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type);
+ub_error_t ub_buffer_update_checksum(ub_buffer_t* buf, ub_chksum_type_t chksum_type);
 
 /**
  * Checks the checksum of the buffer.
