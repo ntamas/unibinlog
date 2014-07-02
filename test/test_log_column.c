@@ -5,42 +5,42 @@
 #include "common.c"
 
 TEST_CASE(get_length) {
-	ub_log_column_t col;
+	ub_log_column_t columns[7];
+	int i;
 
-	ub_log_column_init(&col, 0, UB_DATATYPE_UNKNOWN);
-	if (ub_log_column_get_length(&col) != 0)
+	ub_log_column_init(&columns[0], 0, UB_DATATYPE_UNKNOWN);
+	ub_log_column_init(&columns[1], 0, UB_DATATYPE_U8);
+	ub_log_column_init(&columns[2], 0, UB_DATATYPE_S16);
+	ub_log_column_init(&columns[3], 0, UB_DATATYPE_UNIX_TIMESTAMP);
+	ub_log_column_init(&columns[4], 0, UB_DATATYPE_DOUBLE);
+	ub_log_column_init(&columns[5], 0, UB_DATATYPE_STRING);
+	ub_log_column_init(&columns[6], 0, UB_DATATYPE_BLOB);
+
+	if (ub_log_column_get_length(&columns[0]) != 0)
 		return 1;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_U8);
-	if (ub_log_column_get_length(&col) != 1)
+	if (ub_log_column_get_length(&columns[1]) != 1)
 		return 2;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_S16);
-	if (ub_log_column_get_length(&col) != 2)
+	if (ub_log_column_get_length(&columns[2]) != 2)
 		return 3;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_UNIX_TIMESTAMP);
-	if (ub_log_column_get_length(&col) != 4)
+	if (ub_log_column_get_length(&columns[3]) != 4)
 		return 4;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_DOUBLE);
-	if (ub_log_column_get_length(&col) != 8)
+	if (ub_log_column_get_length(&columns[4]) != 8)
 		return 5;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_STRING);
-	if (ub_log_column_get_length(&col) != 0)
+	if (ub_log_column_get_length(&columns[5]) != 0)
 		return 6;
-	ub_log_column_destroy(&col);
-
-	ub_log_column_init(&col, 0, UB_DATATYPE_BLOB);
-	if (ub_log_column_get_length(&col) != 0)
+	if (ub_log_column_get_length(&columns[6]) != 0)
 		return 7;
-	ub_log_column_destroy(&col);
+	if (ub_log_columns_get_total_length(columns, 5) != 15)
+		return 8;
+	if (ub_log_columns_get_total_length(columns, 6) != 0)
+		return 9;
+	if (ub_log_columns_get_total_length(columns, 7) != 0)
+		return 10;
+
+	for (i = 0; i < sizeof(columns) / sizeof(columns[0]); i++) {
+		ub_log_column_destroy(&columns[i]);
+	}
+
 
 	return 0;
 }

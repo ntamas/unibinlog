@@ -87,5 +87,16 @@ ub_error_t ub_log_column_set_type(ub_log_column_t* column, ub_datatype_t type);
 ub_error_t ub_log_column_write(const ub_log_column_t* column,
 		ub_buffer_location_t* loc);
 
+/**
+ * Returns the total length of the data types in multiple log columns.
+ *
+ * \param  columns      pointer to an array containing columns
+ * \param  num_columns  the number of columns
+ * \return The total length of the data types of the given columns or zero if
+ *         at least one column has a variable length.
+ */
+size_t ub_log_columns_get_total_length(const ub_log_column_t* columns,
+        size_t num_columns);
+
 #endif
 

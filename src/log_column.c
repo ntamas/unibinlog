@@ -29,8 +29,25 @@ const char* ub_log_column_get_name(const ub_log_column_t* column) {
 }
 
 size_t ub_log_column_get_length(const ub_log_column_t* column) {
-    ub_typeinfo_t info = ub_datatype_get_info(ub_log_column_get_type(column));
-    return info.is_variable_length ? 0 : info.length;
+    return ub_log_columns_get_total_length(column, 1);
+}
+
+size_t ub_log_columns_get_total_length(const ub_log_column_t* columns,
+        size_t num_columns) {
+    size_t result = 0;
+    ub_typeinfo_t info;
+
+    while (num_columns > 0) {
+        info = ub_datatype_get_info(ub_log_column_get_type(columns));
+        if (info.is_variable_length) {
+            return 0;
+        } else {
+            result += info.length;
+        }
+        columns++; num_columns--;
+    }
+
+    return result;
 }
 
 ub_datatype_t ub_log_column_get_type(const ub_log_column_t* column) {
