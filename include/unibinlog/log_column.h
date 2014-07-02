@@ -37,6 +37,14 @@ ub_error_t ub_log_column_init(ub_log_column_t* column,
 void ub_log_column_destroy(ub_log_column_t* column);
 
 /**
+ * Returns the length of the data type stored in this column.
+ *
+ * \return The length of the data type stored in this column or zero if the
+ *         column has a variable length.
+ */
+size_t ub_log_column_get_length(const ub_log_column_t* column);
+
+/**
  * Returns a pointer to the name of the column. The name should not be modified
  * directly; use \ref ub_log_column_set_name instead.
  * 

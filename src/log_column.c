@@ -2,6 +2,7 @@
 
 #include <unibinlog/log_column.h>
 #include <unibinlog/memory.h>
+#include <unibinlog/types.h>
 
 ub_error_t ub_log_column_init(ub_log_column_t* column,
 		const char* name, ub_datatype_t type) {
@@ -25,6 +26,11 @@ void ub_log_column_destroy(ub_log_column_t* column) {
 
 const char* ub_log_column_get_name(const ub_log_column_t* column) {
 	return column->name;
+}
+
+size_t ub_log_column_get_length(const ub_log_column_t* column) {
+    ub_typeinfo_t info = ub_datatype_get_info(ub_log_column_get_type(column));
+    return info.is_variable_length ? 0 : info.length;
 }
 
 ub_datatype_t ub_log_column_get_type(const ub_log_column_t* column) {

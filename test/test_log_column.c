@@ -4,6 +4,47 @@
 #include "fmemopen.h"
 #include "common.c"
 
+TEST_CASE(get_length) {
+	ub_log_column_t col;
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_UNKNOWN);
+	if (ub_log_column_get_length(&col) != 0)
+		return 1;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_U8);
+	if (ub_log_column_get_length(&col) != 1)
+		return 2;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_S16);
+	if (ub_log_column_get_length(&col) != 2)
+		return 3;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_UNIX_TIMESTAMP);
+	if (ub_log_column_get_length(&col) != 4)
+		return 4;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_DOUBLE);
+	if (ub_log_column_get_length(&col) != 8)
+		return 5;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_STRING);
+	if (ub_log_column_get_length(&col) != 0)
+		return 6;
+	ub_log_column_destroy(&col);
+
+	ub_log_column_init(&col, 0, UB_DATATYPE_BLOB);
+	if (ub_log_column_get_length(&col) != 0)
+		return 7;
+	ub_log_column_destroy(&col);
+
+	return 0;
+}
+
 TEST_CASE(get_set_name) {
     const char* str = "Spanish inquisition";
 	ub_log_column_t col;
