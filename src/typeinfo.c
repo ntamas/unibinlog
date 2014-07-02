@@ -65,7 +65,7 @@ static ub_typeinfo_t ub_i_datatype_info[] = {
 		/* type = */   UB_DATATYPE_S32,
 		/* name = */   "32-bit signed integer",
 		/* c_name = */ "int32_t",
-		/* length = */ 2,
+		/* length = */ 4,
 		/* is_variable_length */ 0
 	},
 	/* UB_DATATYPE_FLOAT */
