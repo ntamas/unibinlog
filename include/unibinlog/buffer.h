@@ -5,6 +5,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <time.h>
 #include <unistd.h>
 
 #include <unibinlog/basic_types.h>
@@ -71,6 +72,14 @@ typedef struct {
  * indexth byte, cast to the specified type.
  */
 #define UB_BUFFER_FROM_INDEX_AS(buf, index, type) ((type*)((buf).bytes + index))
+
+/**
+ * \def UB_BUFFER_FROM_INDEX_AS_STRING(buf, index)
+ *
+ * Returns a pointer to the data area of the given buffer, starting at the
+ * indexth byte, cast to a string.
+ */
+#define UB_BUFFER_FROM_INDEX_AS_STRING(buf, index) ((char*)(buf).bytes + index)
 
 /**
  * \def UB_BUFFER_LOCATION(loc)
@@ -361,5 +370,168 @@ void ub_buffer_destroy(ub_buffer_t* buf);
 
 /***************************************************************************/
 
-#endif
+/**
+ * Structure that stores the state information of a \em buffer writer, i.e. an
+ * object that writes data into a buffer and optionally grows it as needed.
+ */
+typedef struct {
+    ub_buffer_location_t loc;    /**< The location that the writer will write to */
+    ub_bool_t grow;              /**< Whether to grow the buffer if needed */
+} ub_buffer_writer_t;
 
+/**
+ * Initializes a buffer writer.
+ *
+ * \param  writer  the buffer writer to initialize
+ * \param  buffer  the buffer that the writer will write to
+ * \param  index   the index where the writer will start writing
+ * \param  grow    whether the buffer has to be grown when needed
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_init(ub_buffer_writer_t* writer,
+        ub_buffer_t* buffer, size_t index, ub_bool_t grow);
+
+/**
+ * Destroys a buffer writer.
+ *
+ * \param  writer  the buffer writer to destroy
+ */
+void ub_buffer_writer_destroy(ub_buffer_writer_t* writer);
+
+/**
+ * Seeks the write position of the writer to a new position.
+ *
+ * \param  writer  the buffer writer whose write position is to be adjusted
+ * \param  offset  the offset to adjust the write position with
+ * \param  whence  the location that defines the reference point of the offset;
+ *                 it can be \c SEEK_SET, \c SEEK_CUR or \c SEEK_END, similarly
+ *                 to the \em whence parameter of the \c "fseek()" call.
+ *                 \c SEEK_SET uses the start of the buffer as the reference
+ *                 point, \c SEEK_CUR uses the current write position,
+ *                 \c SEEK_END uses the end of the buffer as the reference
+ *                 point.
+ * \return \c UB_SUCCESS if the seek operation was successful, \c UB_EINVAL if
+ *         the new position would be negative, or if the new position would
+ *         point \em beyond (i.e not \em at) the end of the buffer and growing
+ *         the buffer is not allowed.
+ */
+ub_error_t ub_buffer_writer_seek(ub_buffer_writer_t* writer, long offset,
+        int whence);
+
+/**
+ * Returns the current writer position of the writer.
+ *
+ * \param  the writer
+ * \return the current write position
+ */
+long ub_buffer_writer_tell(const ub_buffer_writer_t* writer);
+
+/**
+ * Writes a \c uint8_t into a buffer managed by the given writer.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_u8(ub_buffer_writer_t* writer, uint8_t value);
+
+/**
+ * Writes a \c int8_t into a buffer managed by the given writer.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_s8(ub_buffer_writer_t* writer, int8_t value);
+
+/**
+ * Writes a \c uint16_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_u16(ub_buffer_writer_t* writer, uint16_t value);
+
+/**
+ * Writes a \c int16_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_s16(ub_buffer_writer_t* writer, int16_t value);
+
+/**
+ * Writes a \c uint32_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_u32(ub_buffer_writer_t* writer, uint32_t value);
+
+/**
+ * Writes a \c int32_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value);
+
+/**
+ * Writes a \c float into a buffer managed by the given writer, \em assuming
+ * that the platform uses a standard IEEE-compatible float representation.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value);
+
+/**
+ * Writes a \c double into a buffer managed by the given writer, \em assuming
+ * that the platform uses a standard IEEE-compatible double representation.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double value);
+
+/**
+ * Writes a null-terminated C string (including its trailing zero byte) into a
+ * buffer managed by the given writer.
+ *
+ * \param  writer  the writer
+ * \param  str     the string to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_string(ub_buffer_writer_t* writer, const char* str);
+
+/**
+ * Writes a \c time_t into a buffer managed by the given writer, using a 32-bit
+ * representation in network byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_timestamp(ub_buffer_writer_t* writer, time_t value);
+
+/**
+ * Writes a \c "struct timeval" into a buffer managed by the given writer, using two
+ * 32-bit numbers, both in network byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_timeval(ub_buffer_writer_t* writer, struct timeval time);
+
+#endif

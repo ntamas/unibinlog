@@ -1,4 +1,4 @@
-set(TESTS chksum log_column lowlevel types)
+set(TESTS buffer buffer_writer chksum log_column lowlevel types)
 set(TEST_SUPPORT_SRCS fmemopen.c)
 
 foreach(test_name ${TESTS})

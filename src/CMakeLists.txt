@@ -5,6 +5,7 @@ CONFIGURE_FILE(
 
 set(unibinlog_SRCS
 	buffer.c
+	buffer_writer.c
 	chksum.c
 	debug.c
 	error.c

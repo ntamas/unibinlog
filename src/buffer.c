@@ -195,6 +195,9 @@ ub_error_t ub_buffer_resize(ub_buffer_t* buf, size_t new_size) {
 
         /* reallocate memory */
         UB_CHECK(ub_buffer_reserve(buf, new_capacity));
+
+        /* fill new space with zeros */
+        memset(buf->bytes + current_size, 0, new_size-current_size);
     }
 
     buf->end = buf->bytes + new_size;
@@ -309,4 +312,3 @@ ub_error_t ub_buffer_validate_checksum(const ub_buffer_t* buf,
     return memcmp(chksum, &buf->bytes[buf_size-chksum_size], chksum_size) ?
         UB_FAILURE : UB_SUCCESS;
 }
-

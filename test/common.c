@@ -5,6 +5,8 @@
 #define START_OF_TESTS                 \
     int main(int argc, char* argv[]) { \
         int __test_index = 1;          \
+		int __first_failed_test = 0;   \
+		int __num_failed_tests = 0;    \
 
 #define RUN_TEST_CASE(func) {  \
     int __retval;               \
@@ -13,7 +15,10 @@
     if (__retval != 0) {   \
         printf("FAILED.\n"); \
         fprintf(stderr, "Test case '" #func "' failed with error code: %d\n", __retval); \
-        return __test_index; \
+		if (__first_failed_test <= 0) { \
+			__first_failed_test = __test_index; \
+		} \
+		__num_failed_tests++; \
     } else {                 \
         printf("ok.\n"); \
     }                        \
@@ -21,6 +26,8 @@
 }
 
 #define NO_MORE_TEST_CASES \
-    return 0;              \
+	printf("\nRan %d test(s), %d successful, %d failed.\n", __test_index-1, \
+			__test_index-1-__num_failed_tests, __num_failed_tests); \
+    return __first_failed_test;              \
 }
 
