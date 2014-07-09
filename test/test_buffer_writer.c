@@ -183,6 +183,48 @@ int test_write_helper(ub_bool_t grow) {
 	return 0;
 }
 
+int test_write_blob_helper(ub_bool_t grow) {
+	ub_buffer_t buffer;
+	ub_buffer_writer_t writer;
+	char bytes[300];
+	int i, n = sizeof(bytes);
+
+	for (i = 0; i < n; i++) {
+		bytes[i] = 'A' + (i % 10);
+	}
+
+	ub_buffer_init(&buffer, grow ? 0 : n + 100);
+	ub_buffer_writer_init(&writer, &buffer, 0, grow);
+
+	ub_buffer_writer_write_short_blob(&writer, bytes, 150);
+	if (UB_BUFFER(buffer)[0] != 150)
+		return 1;
+	if (memcmp(UB_BUFFER(buffer)+1, bytes, 150))
+		return 2;
+	if (grow && ub_buffer_size(&buffer) != 151)
+		return 3;
+
+	if (ub_buffer_writer_write_short_blob(&writer, bytes, 300) != UB_ETOOLONG)
+		return 4;
+
+	ub_buffer_writer_seek(&writer, 0, SEEK_SET);
+
+	ub_buffer_writer_write_blob(&writer, bytes, 300);
+	if (UB_BUFFER(buffer)[0] != 1)
+		return 5;
+	if (UB_BUFFER(buffer)[1] != 44)
+		return 6;
+	if (memcmp(UB_BUFFER(buffer)+2, bytes, 300))
+		return 7;
+	if (grow && ub_buffer_size(&buffer) != 302)
+		return 8;
+
+	ub_buffer_writer_destroy(&writer);
+	ub_buffer_destroy(&buffer);
+
+	return 0;
+}
+
 TEST_CASE(write_nongrowing) {
 	return test_write_helper(0);
 }
@@ -191,9 +233,19 @@ TEST_CASE(write_growing) {
 	return test_write_helper(1);
 }
 
+TEST_CASE(write_blob_nongrowing) {
+	return test_write_blob_helper(0);
+}
+
+TEST_CASE(write_blob_growing) {
+	return test_write_blob_helper(1);
+}
+
 START_OF_TESTS;
 RUN_TEST_CASE(seek_nongrowing);
 RUN_TEST_CASE(seek_growing);
 RUN_TEST_CASE(write_nongrowing);
 RUN_TEST_CASE(write_growing);
+RUN_TEST_CASE(write_blob_nongrowing);
+RUN_TEST_CASE(write_blob_growing);
 NO_MORE_TEST_CASES;

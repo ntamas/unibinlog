@@ -113,6 +113,24 @@ ub_error_t ub_buffer_writer_write_string(ub_buffer_writer_t* writer, const char*
     return ub_i_buffer_writer_write_raw_bytes(writer, str, strlen(str)+1);
 }
 
+ub_error_t ub_buffer_writer_write_short_blob(ub_buffer_writer_t* writer, void* bytes,
+        size_t num_bytes) {
+    if (num_bytes > 255)
+        return UB_ETOOLONG;
+
+    UB_CHECK(ub_buffer_writer_write_u8(writer, num_bytes));
+    return ub_i_buffer_writer_write_raw_bytes(writer, bytes, num_bytes);
+}
+
+ub_error_t ub_buffer_writer_write_blob(ub_buffer_writer_t* writer, void* bytes,
+        size_t num_bytes) {
+    if (num_bytes > 65535)
+        return UB_ETOOLONG;
+
+    UB_CHECK(ub_buffer_writer_write_u16(writer, num_bytes));
+    return ub_i_buffer_writer_write_raw_bytes(writer, bytes, num_bytes);
+}
+
 ub_error_t ub_buffer_writer_write_timestamp(ub_buffer_writer_t* writer, time_t value) {
     uint32_t value_as_uint32 = (uint32_t)value;
     return ub_buffer_writer_write_u32(writer, value_as_uint32);

@@ -515,6 +515,32 @@ ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double valu
 ub_error_t ub_buffer_writer_write_string(ub_buffer_writer_t* writer, const char* str);
 
 /**
+ * Writes a chunk of binary data into a buffer managed by the given writer. The
+ * data is preceded by its length, encoded on one byte. Trying to write more
+ * than 255 bytes returns an error code of \c UB_ETOOLONG.
+ *
+ * \param  writer     the writer
+ * \param  bytes      the binary data to write
+ * \param  num_bytes  the number of bytes to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_short_blob(ub_buffer_writer_t* writer, void* bytes,
+        size_t num_bytes);
+
+/**
+ * Writes a chunk of binary data into a buffer managed by the given writer. The
+ * data is preceded by its length, encoded on two bytes. Trying to write more
+ * than 65535 bytes returns an error code of \c UB_ETOOLONG.
+ *
+ * \param  writer     the writer
+ * \param  bytes      the binary data to write
+ * \param  num_bytes  the number of bytes to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_blob(ub_buffer_writer_t* writer, void* bytes,
+        size_t num_bytes);
+
+/**
  * Writes a \c time_t into a buffer managed by the given writer, using a 32-bit
  * representation in network byte order.
  *
