@@ -101,11 +101,11 @@ ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value)
             sizeof(unsigned_value));
 }
 
-ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value) {
+ub_error_t ub_buffer_writer_write_f32(ub_buffer_writer_t* writer, float value) {
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
 }
 
-ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double value) {
+ub_error_t ub_buffer_writer_write_f64(ub_buffer_writer_t* writer, double value) {
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
 }
 

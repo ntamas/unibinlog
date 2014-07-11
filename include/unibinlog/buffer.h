@@ -485,24 +485,26 @@ ub_error_t ub_buffer_writer_write_u32(ub_buffer_writer_t* writer, uint32_t value
 ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value);
 
 /**
- * Writes a \c float into a buffer managed by the given writer, \em assuming
- * that the platform uses a standard IEEE-compatible float representation.
+ * Writes a 32-bit \c float into a buffer managed by the given writer, \em
+ * assuming that the platform uses a standard IEEE-compatible float
+ * representation.
  *
  * \param  writer  the writer
  * \param  value  the value to write
  * \return \c UB_SUCCESS or an error code
  */
-ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value);
+ub_error_t ub_buffer_writer_write_f32(ub_buffer_writer_t* writer, float value);
 
 /**
- * Writes a \c double into a buffer managed by the given writer, \em assuming
- * that the platform uses a standard IEEE-compatible double representation.
+ * Writes a 64-bit \c double into a buffer managed by the given writer, \em
+ * assuming that the platform uses a standard IEEE-compatible double
+ * representation.
  *
  * \param  writer  the writer
  * \param  value  the value to write
  * \return \c UB_SUCCESS or an error code
  */
-ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double value);
+ub_error_t ub_buffer_writer_write_f64(ub_buffer_writer_t* writer, double value);
 
 /**
  * Writes a null-terminated C string (including its trailing zero byte) into a
