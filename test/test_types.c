@@ -85,6 +85,12 @@ TEST_CASE(get_info) {
 	info = ub_datatype_get_info(UB_DATATYPE_DOUBLE);
 	if (info.length != sizeof(double))
 		return 18;
+	info = ub_datatype_get_info(UB_DATATYPE_U64);
+	if (info.length != sizeof(uint64_t))
+		return 19;
+	info = ub_datatype_get_info(UB_DATATYPE_S64);
+	if (info.length != sizeof(int64_t))
+		return 20;
 
 	return 0;
 }

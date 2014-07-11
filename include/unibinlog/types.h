@@ -37,6 +37,8 @@ typedef enum {
 	UB_DATATYPE_BLOB,                 /**< Length (2 bytes) + binary data */
 	UB_DATATYPE_UNIX_TIMESTAMP,       /**< UNIX timestamp stored as milliseconds on 32 bits */
     UB_DATATYPE_TIMEVAL,              /**< UNIX timestamp stored as seconds and microseconds on 64 bits */
+	UB_DATATYPE_U64,                  /**< Unsigned 64-bit integer */
+	UB_DATATYPE_S64,                  /**< Signed 64-bit integer */
     UB_MAX_DATATYPE                   /**< Not a real type; useful for enumerating all type constants */
 } ub_datatype_t;
 

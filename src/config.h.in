@@ -9,6 +9,8 @@
 #cmakedefine HAVE_FMEMOPEN
 #cmakedefine HAVE_FUNOPEN
 #cmakedefine HAVE_GET_TEMP_FILE_NAME
+#cmakedefine HAVE_INT64
+#cmakedefine HAVE_UINT64
 
 #endif
 

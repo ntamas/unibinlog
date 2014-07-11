@@ -4,6 +4,9 @@
 #define UNIBINLOG_I_UTILS_H
 
 #include <stdint.h>
+#include "config.h"
+
+#ifdef HAVE_UINT64
 
 /**
  * Converts the given 64-bit value from host byte order to network byte order.
@@ -12,6 +15,8 @@
  * \return the converted value
  */
 uint64_t htonll(uint64_t value);
+
+#endif
 
 #endif
 

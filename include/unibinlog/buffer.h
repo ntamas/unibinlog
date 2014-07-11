@@ -484,6 +484,7 @@ ub_error_t ub_buffer_writer_write_u32(ub_buffer_writer_t* writer, uint32_t value
  */
 ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value);
 
+#ifdef HAVE_UINT64
 /**
  * Writes a \c uint64_t into a buffer managed by the given writer, in network
  * byte order.
@@ -493,7 +494,9 @@ ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value)
  * \return \c UB_SUCCESS or an error code
  */
 ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value);
+#endif
 
+#ifdef HAVE_INT64
 /**
  * Writes a \c int64_t into a buffer managed by the given writer, in network
  * byte order.
@@ -503,6 +506,7 @@ ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value
  * \return \c UB_SUCCESS or an error code
  */
 ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value);
+#endif
 
 /**
  * Writes a 32-bit \c float into a buffer managed by the given writer, \em

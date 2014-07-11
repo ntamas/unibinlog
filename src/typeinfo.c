@@ -131,6 +131,22 @@ static ub_typeinfo_t ub_i_datatype_info[] = {
 		/* c_name = */ "uint32_t[2]",
 		/* length = */ 8,
 		/* is_variable_length */ 0
+	},
+	/* UB_DATATYPE_U64 */
+	{
+		/* type = */   UB_DATATYPE_U64,
+		/* name = */   "64-bit unsigned integer",
+		/* c_name = */ "uint64_t",
+		/* length = */ 8,
+		/* is_variable_length */ 0
+	},
+	/* UB_DATATYPE_S64 */
+	{
+		/* type = */   UB_DATATYPE_S64,
+		/* name = */   "64-bit signed integer",
+		/* c_name = */ "int64_t",
+		/* length = */ 8,
+		/* is_variable_length */ 0
 	}
 };
 

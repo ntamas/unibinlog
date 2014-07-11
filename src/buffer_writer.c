@@ -102,16 +102,20 @@ ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value)
             sizeof(unsigned_value));
 }
 
+#ifdef HAVE_UINT64
 ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value) {
     value = htonll(value);
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
 }
+#endif
 
+#ifdef HAVE_INT64
 ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value) {
     uint64_t unsigned_value = htonll(*((uint64_t*)&value));
     return ub_i_buffer_writer_write_raw_bytes(writer, &unsigned_value,
             sizeof(unsigned_value));
 }
+#endif
 
 ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value) {
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
