@@ -160,21 +160,23 @@ int test_write_helper(ub_bool_t grow) {
 			(grow && ub_buffer_size(&buffer) != 31))
 		return 7;
 
-	time = 0x1234567;
+	time = 0x123456789ABCDEF;
 	ub_buffer_writer_write_timestamp(&writer, time);
 	if (UB_BUFFER(buffer)[31] != 0x01 || UB_BUFFER(buffer)[32] != 0x23 ||
 	        UB_BUFFER(buffer)[33] != 0x45 || UB_BUFFER(buffer)[34] != 0x67 ||
-			(grow && ub_buffer_size(&buffer) != 35))
+	        UB_BUFFER(buffer)[35] != 0x89 || UB_BUFFER(buffer)[36] != 0xAB ||
+	        UB_BUFFER(buffer)[37] != 0xCD || UB_BUFFER(buffer)[38] != 0xEF ||
+			(grow && ub_buffer_size(&buffer) != 39))
 		return 8;
 
 	tv.tv_sec  = 0x01234567;
 	tv.tv_usec = 0x87654321;
 	ub_buffer_writer_write_timeval(&writer, tv);
-	if (UB_BUFFER(buffer)[35] != 0x01 || UB_BUFFER(buffer)[36] != 0x23 ||
-	        UB_BUFFER(buffer)[37] != 0x45 || UB_BUFFER(buffer)[38] != 0x67 ||
-	        UB_BUFFER(buffer)[39] != 0x87 || UB_BUFFER(buffer)[40] != 0x65 ||
-	        UB_BUFFER(buffer)[41] != 0x43 || UB_BUFFER(buffer)[42] != 0x21 ||
-			(grow && ub_buffer_size(&buffer) != 43))
+	if (UB_BUFFER(buffer)[39] != 0x01 || UB_BUFFER(buffer)[40] != 0x23 ||
+	        UB_BUFFER(buffer)[41] != 0x45 || UB_BUFFER(buffer)[42] != 0x67 ||
+	        UB_BUFFER(buffer)[43] != 0x87 || UB_BUFFER(buffer)[44] != 0x65 ||
+	        UB_BUFFER(buffer)[45] != 0x43 || UB_BUFFER(buffer)[46] != 0x21 ||
+			(grow && ub_buffer_size(&buffer) != 47))
 		return 9;
 
 	ub_buffer_writer_destroy(&writer);

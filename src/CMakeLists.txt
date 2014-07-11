@@ -12,6 +12,7 @@ set(unibinlog_SRCS
 	log_column.c
 	lowlevel.c
 	typeinfo.c
+	utils.c
 )
 	
 add_library(unibinlog

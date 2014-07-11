@@ -120,8 +120,8 @@ static ub_typeinfo_t ub_i_datatype_info[] = {
 	{
 		/* type = */   UB_DATATYPE_UNIX_TIMESTAMP,
 		/* name = */   "UNIX timestamp (msecs since UNIX epoch)",
-		/* c_name = */ "uint32_t",
-		/* length = */ 4,
+		/* c_name = */ "uint64_t",
+		/* length = */ 8,
 		/* is_variable_length */ 0
 	},
 	/* UB_DATATYPE_TIMEVAL */

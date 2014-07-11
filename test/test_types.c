@@ -74,14 +74,14 @@ TEST_CASE(get_info) {
 	info = ub_datatype_get_info(UB_DATATYPE_S32);
 	if (info.length != sizeof(int32_t))
 		return 15;
-	info = ub_datatype_get_info(UB_DATATYPE_UNIX_TIMESTAMP);
-	if (info.length != sizeof(uint32_t))
-		return 16;
 	info = ub_datatype_get_info(UB_DATATYPE_FLOAT);
 	if (info.length != sizeof(float))
 		return 17;
 
 	/* check lengths of common 8-byte types */
+	info = ub_datatype_get_info(UB_DATATYPE_UNIX_TIMESTAMP);
+	if (info.length != sizeof(uint64_t))
+		return 16;
 	info = ub_datatype_get_info(UB_DATATYPE_DOUBLE);
 	if (info.length != sizeof(double))
 		return 18;

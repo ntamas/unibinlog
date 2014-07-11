@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 #include <unibinlog/buffer.h>
+#include "utils.h"
 
 ub_error_t ub_buffer_writer_init(ub_buffer_writer_t* writer, ub_buffer_t* buffer,
         size_t index, ub_bool_t grow) {
@@ -101,11 +102,22 @@ ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value)
             sizeof(unsigned_value));
 }
 
-ub_error_t ub_buffer_writer_write_f32(ub_buffer_writer_t* writer, float value) {
+ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value) {
+    value = htonll(value);
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
 }
 
-ub_error_t ub_buffer_writer_write_f64(ub_buffer_writer_t* writer, double value) {
+ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value) {
+    uint64_t unsigned_value = htonll(*((uint64_t*)&value));
+    return ub_i_buffer_writer_write_raw_bytes(writer, &unsigned_value,
+            sizeof(unsigned_value));
+}
+
+ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value) {
+    return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
+}
+
+ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double value) {
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
 }
 
@@ -132,8 +144,8 @@ ub_error_t ub_buffer_writer_write_blob(ub_buffer_writer_t* writer, void* bytes,
 }
 
 ub_error_t ub_buffer_writer_write_timestamp(ub_buffer_writer_t* writer, time_t value) {
-    uint32_t value_as_uint32 = (uint32_t)value;
-    return ub_buffer_writer_write_u32(writer, value_as_uint32);
+    uint64_t value_as_uint64 = (uint64_t)value;
+    return ub_buffer_writer_write_u64(writer, value_as_uint64);
 }
 
 ub_error_t ub_buffer_writer_write_timeval(ub_buffer_writer_t* writer, struct timeval time) {

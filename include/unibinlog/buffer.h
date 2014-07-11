@@ -485,6 +485,26 @@ ub_error_t ub_buffer_writer_write_u32(ub_buffer_writer_t* writer, uint32_t value
 ub_error_t ub_buffer_writer_write_s32(ub_buffer_writer_t* writer, int32_t value);
 
 /**
+ * Writes a \c uint64_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value);
+
+/**
+ * Writes a \c int64_t into a buffer managed by the given writer, in network
+ * byte order.
+ *
+ * \param  writer  the writer
+ * \param  value  the value to write
+ * \return \c UB_SUCCESS or an error code
+ */
+ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value);
+
+/**
  * Writes a 32-bit \c float into a buffer managed by the given writer, \em
  * assuming that the platform uses a standard IEEE-compatible float
  * representation.
@@ -543,7 +563,7 @@ ub_error_t ub_buffer_writer_write_blob(ub_buffer_writer_t* writer, void* bytes,
         size_t num_bytes);
 
 /**
- * Writes a \c time_t into a buffer managed by the given writer, using a 32-bit
+ * Writes a \c time_t into a buffer managed by the given writer, using a 64-bit
  * representation in network byte order.
  *
  * \param  writer  the writer
