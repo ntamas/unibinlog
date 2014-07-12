@@ -148,8 +148,14 @@ ub_error_t ub_buffer_writer_write_blob(ub_buffer_writer_t* writer, void* bytes,
 }
 
 ub_error_t ub_buffer_writer_write_timestamp(ub_buffer_writer_t* writer, time_t value) {
+#ifdef HAVE_UINT64
     uint64_t value_as_uint64 = (uint64_t)value;
     return ub_buffer_writer_write_u64(writer, value_as_uint64);
+#else
+    long long int value_as_long_long = (long long int)value;
+    UB_CHECK(ub_buffer_writer_write_u32(writer, value_as_long_long >> 32));
+    return ub_buffer_writer_write_u32(writer, value_as_long_long & 0xFFFFFFFFLL);
+#endif
 }
 
 ub_error_t ub_buffer_writer_write_timeval(ub_buffer_writer_t* writer, struct timeval time) {

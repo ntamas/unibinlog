@@ -1,6 +1,7 @@
 #include <string.h>
 #include <unibinlog/buffer.h>
 #include "common.c"
+#include "config.h"
 
 TEST_CASE(seek_nongrowing) {
 	ub_buffer_t buffer;
@@ -179,6 +180,7 @@ int test_write_helper(ub_bool_t grow) {
 			(grow && ub_buffer_size(&buffer) != 47))
 		return 9;
 
+#ifdef HAVE_UINT64
 	ub_buffer_writer_write_u64(&writer, 0xdeadbeef0badcafe);
 	if (UB_BUFFER(buffer)[47] != 0xde || UB_BUFFER(buffer)[48] != 0xad ||
 	        UB_BUFFER(buffer)[49] != 0xbe || UB_BUFFER(buffer)[50] != 0xef ||
@@ -186,7 +188,14 @@ int test_write_helper(ub_bool_t grow) {
 	        UB_BUFFER(buffer)[53] != 0xca || UB_BUFFER(buffer)[54] != 0xfe ||
 			(grow && ub_buffer_size(&buffer) != 55))
 		return 10;
+#else
+	if (grow) {
+		ub_buffer_resize(&buffer, 55);
+	}
+	ub_buffer_writer_seek(&writer, 8, SEEK_CUR);
+#endif
 
+#ifdef HAVE_INT64
 	ub_buffer_writer_write_s64(&writer, 0x0badcafedeadbeef);
 	if (UB_BUFFER(buffer)[55] != 0x0b || UB_BUFFER(buffer)[56] != 0xad ||
 	        UB_BUFFER(buffer)[57] != 0xca || UB_BUFFER(buffer)[58] != 0xfe ||
@@ -194,6 +203,12 @@ int test_write_helper(ub_bool_t grow) {
 	        UB_BUFFER(buffer)[61] != 0xbe || UB_BUFFER(buffer)[62] != 0xef ||
 			(grow && ub_buffer_size(&buffer) != 63))
 		return 11;
+#else
+	if (grow) {
+		ub_buffer_resize(&buffer, 63);
+	}
+	ub_buffer_writer_seek(&writer, 8, SEEK_CUR);
+#endif
 
 	ub_buffer_writer_destroy(&writer);
 	ub_buffer_destroy(&buffer);
