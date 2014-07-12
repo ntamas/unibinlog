@@ -6,9 +6,12 @@
 #ifndef UNIBINLOG_CONFIG_H
 #define UNIBINLOG_CONFIG_H
 
+#cmakedefine HAVE_FLOAT_BYTES_BIGENDIAN
+#cmakedefine HAVE_FLOAT_WORDS_BIGENDIAN
 #cmakedefine HAVE_FMEMOPEN
 #cmakedefine HAVE_FUNOPEN
 #cmakedefine HAVE_GET_TEMP_FILE_NAME
+#cmakedefine HAVE_IEEE754_FLOATS
 #cmakedefine HAVE_INT64
 #cmakedefine HAVE_UINT64
 

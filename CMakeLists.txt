@@ -35,6 +35,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake;${CMAKE_MODULE_PATH}
 
 INCLUDE(CheckSymbolExists)
 INCLUDE(CheckTypeSize)
+INCLUDE(CheckFloatingPointFormat)
+
 CHECK_SYMBOL_EXISTS(fmemopen stdio.h HAVE_FMEMOPEN)
 CHECK_SYMBOL_EXISTS(funopen stdio.h HAVE_FUNOPEN)
 
@@ -42,6 +44,9 @@ set(CMAKE_EXTRA_INCLUDE_FILES stdint.h)
 CHECK_TYPE_SIZE("int64_t" INT64)
 CHECK_TYPE_SIZE("uint64_t" UINT64)
 set(CMAKE_EXTRA_INCLUDE_FILES)
+
+UB_CHECK_FLOATING_POINT_FORMAT(HAVE_IEEE754_FLOATS
+	HAVE_FLOAT_BYTES_BIGENDIAN HAVE_FLOAT_WORDS_BIGENDIAN)
 
 #####################################################################
 # Compiler flags for different build configurations
