@@ -3,6 +3,16 @@
 #include "common.c"
 #include "config.h"
 
+/* The two functions below could not have been included in unibinlog/buffer.h
+ * because it does not include config.h, but we want to test them nevertheless */
+#ifdef HAVE_UINT64
+ub_error_t ub_buffer_writer_write_u64(ub_buffer_writer_t* writer, uint64_t value);
+#endif
+
+#ifdef HAVE_INT64
+ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value);
+#endif
+
 TEST_CASE(seek_nongrowing) {
 	ub_buffer_t buffer;
 	ub_buffer_writer_t writer;
@@ -122,7 +132,7 @@ int test_write_helper(ub_bool_t grow) {
 	time_t time;
 	struct timeval tv;
 
-	ub_buffer_init(&buffer, grow ? 0 : 64);
+	ub_buffer_init(&buffer, grow ? 0 : 128);
 	ub_buffer_writer_init(&writer, &buffer, 0, grow);
 	ub_buffer_writer_seek(&writer, 5, SEEK_SET);
 
@@ -208,6 +218,27 @@ int test_write_helper(ub_bool_t grow) {
 		ub_buffer_resize(&buffer, 63);
 	}
 	ub_buffer_writer_seek(&writer, 8, SEEK_CUR);
+#endif
+
+#ifdef HAVE_IEEE754_FLOATS
+	ub_buffer_writer_write_double(&writer, 2.39373654120722785592079162598E6);
+	if (UB_BUFFER(buffer)[63] != 0x41 || UB_BUFFER(buffer)[64] != 0x42 ||
+			UB_BUFFER(buffer)[65] != 0x43 || UB_BUFFER(buffer)[66] != 0x44 ||
+			UB_BUFFER(buffer)[67] != 0x45 || UB_BUFFER(buffer)[68] != 0x46 ||
+			UB_BUFFER(buffer)[69] != 0x47 || UB_BUFFER(buffer)[70] != 0x48 ||
+			(grow && ub_buffer_size(&buffer) != 71))
+		return 12;
+
+	ub_buffer_writer_write_float(&writer, 1.2141422271728515625E1);
+	if (UB_BUFFER(buffer)[71] != 0x41 || UB_BUFFER(buffer)[72] != 0x42 ||
+			UB_BUFFER(buffer)[73] != 0x43 || UB_BUFFER(buffer)[74] != 0x44 ||
+			(grow && ub_buffer_size(&buffer) != 75))
+		return 13;
+#else
+	if (grow) {
+		ub_buffer_resize(&buffer, 75);
+	}
+	ub_buffer_writer_seek(&writer, 12, SEEK_CUR);
 #endif
 
 	ub_buffer_writer_destroy(&writer);

@@ -118,11 +118,21 @@ ub_error_t ub_buffer_writer_write_s64(ub_buffer_writer_t* writer, int64_t value)
 #endif
 
 ub_error_t ub_buffer_writer_write_float(ub_buffer_writer_t* writer, float value) {
+#ifndef HAVE_IEEE754_FLOATS
+    return UB_ENOTSUPPORTED;
+#else
+    value = htonf(value);
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
+#endif
 }
 
 ub_error_t ub_buffer_writer_write_double(ub_buffer_writer_t* writer, double value) {
+#ifndef HAVE_IEEE754_FLOATS
+    return UB_ENOTSUPPORTED;
+#else
+    value = htonlf(value);
     return ub_i_buffer_writer_write_raw_bytes(writer, &value, sizeof(value));
+#endif
 }
 
 ub_error_t ub_buffer_writer_write_string(ub_buffer_writer_t* writer, const char* str) {

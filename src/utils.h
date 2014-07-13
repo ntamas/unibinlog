@@ -18,5 +18,25 @@ uint64_t htonll(uint64_t value);
 
 #endif
 
+#ifdef HAVE_IEEE754_FLOATS
+
+/**
+ * Converts the given IEEE-754 float from host byte order to network byte order.
+ *
+ * \param  value  the value to convert
+ * \return the converted value
+ */
+float htonf(float value);
+
+/**
+ * Converts the given IEEE-754 double from host byte order to network byte order.
+ *
+ * \param  value  the value to convert
+ * \return the converted value
+ */
+double htonlf(double value);
+
+#endif
+
 #endif
 
