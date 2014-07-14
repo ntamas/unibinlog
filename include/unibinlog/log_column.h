@@ -37,6 +37,12 @@ ub_error_t ub_log_column_init(ub_log_column_t* column,
 void ub_log_column_destroy(ub_log_column_t* column);
 
 /**
+ * Destroys an array of \c ub_log_column_t structures and releases all memory
+ * that they allocated (but \en not the memory occupied by the array itself).
+ */
+void ub_log_column_destroy_array(ub_log_column_t* column, size_t num_columns);
+
+/**
  * Returns the length of the data type stored in this column.
  *
  * \return The length of the data type stored in this column or zero if the

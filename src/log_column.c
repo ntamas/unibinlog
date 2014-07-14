@@ -24,6 +24,14 @@ void ub_log_column_destroy(ub_log_column_t* column) {
 	ub_free_unless_null(column->xform_params);
 }
 
+void ub_log_column_destroy_array(ub_log_column_t* column, size_t num_columns) {
+    ub_log_column_t* end = column + num_columns;
+    while (column < end) {
+        ub_log_column_destroy(column);
+        column++;
+    }
+}
+
 const char* ub_log_column_get_name(const ub_log_column_t* column) {
 	return column->name;
 }
