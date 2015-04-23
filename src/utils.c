@@ -4,6 +4,7 @@
 #include "utils.h"
 
 #ifdef HAVE_UINT64
+#  ifndef HAVE_HTONLL
 uint64_t htonll(uint64_t value) {
 	static const int endianness_check = 42;
 
@@ -14,6 +15,7 @@ uint64_t htonll(uint64_t value) {
 	const uint32_t low_part = htonl((uint32_t)(value & 0xFFFFFFFFLL));
 	return (((uint64_t)low_part) << 32) | high_part;
 }
+#  endif
 #endif
 
 #ifdef HAVE_IEEE754_FLOATS

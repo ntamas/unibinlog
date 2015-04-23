@@ -39,6 +39,7 @@ INCLUDE(CheckFloatingPointFormat)
 
 CHECK_SYMBOL_EXISTS(fmemopen stdio.h HAVE_FMEMOPEN)
 CHECK_SYMBOL_EXISTS(funopen stdio.h HAVE_FUNOPEN)
+CHECK_SYMBOL_EXISTS(htonll arpa/inet.h HAVE_HTONLL)
 
 set(CMAKE_EXTRA_INCLUDE_FILES stdint.h)
 CHECK_TYPE_SIZE("int64_t" INT64)
