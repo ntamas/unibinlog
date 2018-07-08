@@ -140,7 +140,7 @@ int test_write_helper(ub_bool_t grow) {
 	if (UB_BUFFER(buffer)[5] != 42 || (grow && ub_buffer_size(&buffer) != 6))
 		return 1;
 
-	ub_buffer_writer_write_s8(&writer, 217);
+	ub_buffer_writer_write_s8(&writer, -39);
 	if (UB_BUFFER(buffer)[6] != 217 || (grow && ub_buffer_size(&buffer) != 7))
 		return 2;
 
