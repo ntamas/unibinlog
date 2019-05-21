@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0003 NEW)
 
 #####################################################################
@@ -47,7 +47,7 @@ CHECK_TYPE_SIZE("uint64_t" UINT64)
 set(CMAKE_EXTRA_INCLUDE_FILES)
 
 UB_CHECK_FLOATING_POINT_FORMAT(HAVE_IEEE754_FLOATS
-	HAVE_FLOAT_BYTES_BIGENDIAN HAVE_FLOAT_WORDS_BIGENDIAN)
+    HAVE_FLOAT_BYTES_BIGENDIAN HAVE_FLOAT_WORDS_BIGENDIAN)
 
 #####################################################################
 # Compiler flags for different build configurations
@@ -62,11 +62,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_ARCH_FLAGS} -O3 -DNDEBUG -Wall -s")
 set(CMAKE_C_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-                    ${CMAKE_CURRENT_BINARY_DIR}/include
-					${CMAKE_CURRENT_SOURCE_DIR}/src
-					${CMAKE_CURRENT_BINARY_DIR}/src)
-
 #####################################################################
 # Process subdirectories
 #####################################################################
@@ -74,8 +69,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 add_subdirectory(src)
 
 if(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
-	add_subdirectory(test)
+    add_subdirectory(test)
 else(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
-	message("Neither fmemopen() nor funopen() is supported on this platform; "
-		"tests will not be compiled")
+    message("Neither fmemopen() nor funopen() is supported on this platform; "
+        "tests will not be compiled")
 endif(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
