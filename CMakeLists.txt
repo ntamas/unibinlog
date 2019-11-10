@@ -68,9 +68,22 @@ set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 
 add_subdirectory(src)
 
-if(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
-    add_subdirectory(test)
-else(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
-    message("Neither fmemopen() nor funopen() is supported on this platform; "
-        "tests will not be compiled")
-endif(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+#####################################################################
+# Set up testing
+#####################################################################
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+endif()
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    if(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+        add_subdirectory(test)
+    else(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+        message(
+            "Neither fmemopen() nor funopen() is supported on this platform; "
+            "tests will not be compiled"
+        )
+    endif(HAVE_FMEMOPEN OR HAVE_FUNOPEN)
+endif()
+
