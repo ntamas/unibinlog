@@ -53,12 +53,12 @@ UB_CHECK_FLOATING_POINT_FORMAT(HAVE_IEEE754_FLOATS
 # Compiler flags for different build configurations
 #####################################################################
 
-set(CMAKE_C_FLAGS   "${CMAKE_ARCH_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_ARCH_FLAGS} -Wall")
+set(CMAKE_C_FLAGS   "${CMAKE_ARCH_FLAGS} -Wall -Wno-strict-aliasing")
+set(CMAKE_CXX_FLAGS "${CMAKE_ARCH_FLAGS} -Wall -Wno-strict-aliasing")
 set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_ARCH_FLAGS} -O0 -ggdb")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_ARCH_FLAGS} -O0 -ggdb")
-set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_ARCH_FLAGS} -O3 -DNDEBUG -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_ARCH_FLAGS} -O3 -DNDEBUG -Wall")
+set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_ARCH_FLAGS} -O3 -DNDEBUG -Wall -Wno-strict-aliasing")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_ARCH_FLAGS} -O3 -DNDEBUG -Wall -Wno-strict-aliasing")
 set(CMAKE_C_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_ARCH_FLAGS} -pg")
 
